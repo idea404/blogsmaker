@@ -6,7 +6,7 @@ Dynamically generate blog sites.
 
 ```mermaid
 graph TB
-A((Start Program)) --> B[Tell Program to \nGenereate X Blogsites]
+A((Start Program)) --> B[Give Program X Subjects to \nGenereate Blogsites]
 B --> C{For every site:}
 subgraph Generate Blogsite
   C --> D{{Ask openAI \n for domain names}}
