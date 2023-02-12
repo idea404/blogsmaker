@@ -5,7 +5,7 @@ Dynamically generate blog sites.
 ## High Level Design
 
 ```mermaid
-graph LR
+graph TB
 A((Start Program)) --> B[Tell Program to \nGenereate X Blogsites]
 B --> C{For every site:}
 subgraph Generate Blogsite
