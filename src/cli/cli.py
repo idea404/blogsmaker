@@ -1,6 +1,6 @@
 from structlog import get_logger
 
-from generator.generator import BlogGenerator
+from generator import BlogGenerator
 
 logger = get_logger()
 
