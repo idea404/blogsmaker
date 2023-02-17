@@ -14,7 +14,7 @@ class OpenAIClient:
 
     def list_engines(self):
         return openai.Engine.list()
-    
+
     def create_completion(self, prompt, max_tokens=100, temperature=0.9):
         response = openai.Completion.create(
             model=self.engine,
