@@ -1,56 +1,69 @@
-from dataclasses import dataclass
 import unsync
 from structlog import get_logger
 
 from apis.openai import OpenAIClient
+from db import BlogSite, DBManager
 
 logger = get_logger()
-
-@dataclass
-class SubjectDomain:
-    subject: str
-    domain: str
 
 class BlogGenerator:
     def __init__(self) -> None:
         self.openai_client = OpenAIClient()
         logger.info("BlogGenerator initialized")
 
-    def generate(self, subjects):
+    def generate(self, subjects: list[str]):
         logger.info(f"Generating blog sites for subjects: {subjects}")
-        self.dns_search_and_register(subjects)
+        sites = self._instantiate_blog_sites(subjects)
+        sites = self.dns_search_and_register(sites)
 
-    def dns_search_and_register(self, subjects):
-        subject_domains = self._dns_search(subjects)
-        self._dns_register(subject_domains)
+    def _instantiate_blog_sites(self, subjects: list[str]) -> list[BlogSite]:
+        logger.info(f"Instantiating blog sites for subjects: {subjects}")
+        sites = []
+        for subject in subjects:
+            site_status = DBManager.get_blog_site_status(subject)
+            if site_status is None:
+                site_status = BlogSite(subject)
+                DBManager.set_blog_site_status(site_status)
+            sites.append(site_status)
+        return sites
 
-    def _dns_search(self, subjects) -> list[SubjectDomain]:
-        logger.info(f"Searching for domains for subjects: {subjects}")
-        tasks = [self._dns_search_subject(subject) for subject in subjects]
+    def dns_search_and_register(self, site_statuses: list[BlogSite]) -> list[BlogSite]:
+        sites = self._dns_search(site_statuses)
+        sites = self._dns_register(site_statuses)
+        return sites
+
+    def _dns_search(self, site_statuses: list[BlogSite]) -> list[BlogSite]:
+        domainless_sites = [site for site in site_statuses if site.domain is None]
+        logger.info(f"Searching for domains for subjects: {domainless_sites}")
+        tasks = [self._dns_search_subject(site) for site in domainless_sites]
         return [task.result() for task in tasks]
 
     @unsync
-    def _dns_search_subject(self, subject, max_attemps=10) -> SubjectDomain | None:
-        logger.debug(f"Searching for domain for subject: {subject}")
-        is_available_dns_found = False
+    def _dns_search_subject(self, site: BlogSite, max_attemps=10) -> BlogSite:
+        logger.debug(f"Searching for domain for site: {site}")
+        is_available_dns = False
         attempt = 0
-        while not is_available_dns_found:
+        while not is_available_dns:
             attempt += 1
-            domain = self._generate_domain(subject)
-            is_available_dns_found = self._check_dns(domain)
+            domain = self._generate_new_domain(site)
+            site.desired_domains.add(domain)
+            is_available_dns = self._check_dns_availability(domain)
             if attempt > max_attemps:
-                logger.error(f"Max attempts reached for subject: {subject}")
+                logger.error(f"Max attempts DNS search reached for site: {site}")
                 return 
-        return SubjectDomain(subject, domain)
-    
-    def _generate_domain(self, subject) -> str:
-        logger.debug(f"Generating domain for subject: {subject}")
-        prompt = f"Generate a domain for subject {subject}"
+        site.available_domain = domain
+        return site
+
+    def _generate_new_domain(self, site: BlogSite) -> str:
+        logger.debug(f"Asking openAI for domain for site: {site}")
+        prompt = f"Generate a domain for subject {site.subject}"
+        # TODO: Use whitelist for domain suffixes
+        # TODO: Use site.desited_domains to avoid duplicates
         response = self.openai_client.create_completion(prompt)
         domain = response.choices[0].text.replace("\n\n", "")
         return domain
     
-    def _check_dns(self, domain) -> bool:
+    def _check_dns_availability(self, domain: str) -> bool:
         logger.debug(f"Checking DNS for domain: {domain}")
         # TODO: Implement DNS check using cloudflare API
         return True
