@@ -1,13 +1,20 @@
 from unittest import TestCase
 
+from apis import OpenAIClient
+
 
 class TestIntegrationTests(TestCase):
-    def test_openai_client(self):
-        from src.apis.openai import OpenAIClient
+    def setUp(self) -> None:
+        super().setUp()
+        self.client = OpenAIClient()
 
-        client = OpenAIClient()
+    def tearDown(self) -> None:
+        super().tearDown()
+        self.client = None
+
+    def test_openai_client(self):
         prompt = "Say this in Dutch: Monday"
-        response = client.create_completion(prompt)
+        response = self.client.create_completion(prompt, temperature=0)
         self.assertTrue(response)
-        response_text = response.choices[0].text.replace("\n\n", "")
+        response_text = response.json()["choices"][0]["text"].replace("\n\n", "")
         self.assertEquals(response_text, "Maandag")

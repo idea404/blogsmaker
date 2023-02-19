@@ -1,10 +1,11 @@
-import unsync
+from unsync import unsync
 from structlog import get_logger
 
-from apis.openai import OpenAIClient
+from apis import OpenAIClient
 from db import BlogSite, DBManager
 
 logger = get_logger()
+
 
 class BlogGenerator:
     def __init__(self) -> None:
@@ -22,10 +23,10 @@ class BlogGenerator:
         logger.info(f"Instantiating blog sites for subjects: {subjects}")
         sites = []
         for subject in subjects:
-            site_status = DBManager.get_blog_site_status(subject)
+            site_status = DBManager.get_blog_site(subject)
             if site_status is None:
                 site_status = BlogSite(subject)
-                DBManager.set_blog_site_status(site_status)
+                DBManager.save_blog_site(site_status)
             sites.append(site_status)
         return sites
 
@@ -48,7 +49,7 @@ class DNSManager:
         return [task.result() for task in tasks]
 
     @unsync
-    def _search_subject(self, site: BlogSite, max_attemps=10) -> BlogSite:
+    def _search_subject(self, site: BlogSite, max_attempts=10) -> BlogSite:
         logger.debug(f"Searching for domain for site: {site}")
         is_available_dns = False
         attempt = 0
@@ -57,9 +58,9 @@ class DNSManager:
             domain = self._generate_new_domain(site)
             site.desired_domains.add(domain)
             is_available_dns = self._check_availability(domain)
-            if attempt > max_attemps:
+            if attempt > max_attempts:
                 logger.error(f"Max attempts DNS search reached for site: {site}")
-                return 
+                return
         site.available_domain = domain
         return site
 
@@ -67,7 +68,7 @@ class DNSManager:
         logger.debug(f"Asking openAI for domain for site: {site}")
         prompt = f"Generate a domain for subject {site.subject}"
         # TODO: Use whitelist for domain suffixes
-        # TODO: Use site.desited_domains to avoid duplicates
+        # TODO: Use site.desired_domains to avoid duplicates
         response = self.openai_client.create_completion(prompt)
         domain = response.choices[0].text.replace("\n\n", "")
         return domain

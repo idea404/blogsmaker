@@ -1,39 +1,37 @@
 import json
+import os
 
-from model import BlogSite
+from .model import BlogSite
 
 
-class DBManager: 
-    file = "status.json"  # TODO: Move to constructor
+class DBManager:
+    def __init__(self, file=None) -> None:
+        self.file_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "..", "db", "status.json"
+        )
 
-    @staticmethod
-    def _load_db() -> dict:
-        with open(DBManager.file, "r") as f:
+    def _load_db(self) -> dict:
+        with open(DBManager.file_path, "r") as f:
             return json.load(f)
-        
-    @staticmethod
-    def _save_db(data: dict):
-        with open(DBManager.file, "w") as f:
+
+    def _save_db(self, data: dict):
+        with open(DBManager.file_path, "w") as f:
             json.dump(data, f)
-    
-    @staticmethod
-    def _get_status(subject: str) -> dict | None:
+
+    def _get_site(self, subject: str) -> dict | None:
         db = DBManager._load_db()
         return db.get(subject)
 
-    @staticmethod
-    def _set_status(subject: str, status: dict):
+    def _set_site(self, subject: str, status: dict):
         db = DBManager._load_db()
         db[subject] = status
         DBManager._save_db(db)
 
-    @staticmethod
-    def get_blog_site_status(status: str) -> BlogSite | None:
-        status_dict = DBManager._get_status(status)
+    def get_blog_site(self, status: str) -> BlogSite | None:
+        status_dict = DBManager._get_site(status)
         if status_dict is None:
             return None
         return BlogSite(**status_dict)
 
-    @staticmethod
-    def set_blog_site_status(status: BlogSite):
-        DBManager._set_status(status.subject, status.to_dict())
+    def save_blog_site(self, status: BlogSite):
+        DBManager._set_site(status.subject, status.to_dict())
