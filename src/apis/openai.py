@@ -1,4 +1,3 @@
-import openai
 import requests
 from structlog import get_logger
 
@@ -10,7 +9,7 @@ logger = get_logger()
 class OpenAIClient:
     def __init__(self) -> None:
         self.api_key = OPENAI_API_KEY
-        assert openai.api_key, "OPENAI_API_KEY is not set"
+        assert self.api_key, "OPENAI_API_KEY is not set"
         self.engine = "text-davinci-003"
         logger.debug("OpenAI client initialized")
 
