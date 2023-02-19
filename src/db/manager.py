@@ -4,7 +4,7 @@ from model import BlogSite
 
 
 class DBManager: 
-    file = "status.json"
+    file = "status.json"  # TODO: Move to constructor
 
     @staticmethod
     def _load_db() -> dict:
