@@ -77,4 +77,5 @@ class DNSManager:
     def _check_availability(self, domain: str) -> bool:
         logger.debug(f"Checking DNS for domain: {domain}")
         # TODO: Implement DNS check using cloudflare API
+        # TODO: Implement price check using DNSimple API
         return True
