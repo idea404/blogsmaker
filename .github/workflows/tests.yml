@@ -1,6 +1,8 @@
 name: Tests
 on:
   push:
+env:
+  PYTHONPATH: src
 jobs:
   Unit-Tests:
     runs-on: ubuntu-latest
