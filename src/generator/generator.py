@@ -56,8 +56,9 @@ class DNSManager:
         while not is_available_dns:
             attempt += 1
             domain = self._generate_new_domain(site)
-            site.desired_domains.add(domain)
+            site.desired_domains[domain] = "unverified"
             is_available_dns = self._check_availability(domain)
+            site.desired_domains[domain] = "verified"
             if attempt > max_attempts:
                 logger.error(f"Max attempts DNS search reached for site: {site}")
                 return
