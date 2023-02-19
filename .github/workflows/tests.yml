@@ -3,6 +3,7 @@ on:
   push:
 env:
   PYTHONPATH: src
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 jobs:
   Unit-Tests:
     runs-on: ubuntu-latest
