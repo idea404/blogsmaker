@@ -17,4 +17,4 @@ class TestIntegrationTests(TestCase):
         response = self.client.create_completion(prompt, temperature=0)
         self.assertTrue(response)
         response_text = response.json()["choices"][0]["text"].replace("\n\n", "")
-        self.assertEquals(response_text, "Maandag")
+        self.assertEqual(response_text, "Maandag")
