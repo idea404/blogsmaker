@@ -16,7 +16,7 @@ class OpenAIClient:
     def list_engines(self):
         raise NotImplementedError()  # TODO
 
-    def create_completion(
+    def _request_create_completion(
         self, prompt, max_tokens=100, temperature=0.9
     ) -> requests.Response:
         response = requests.post(
@@ -34,3 +34,10 @@ class OpenAIClient:
         )
 
         return response
+
+    def create_completion(self, prompt, max_tokens=100, temperature=0.9) -> str:
+        response = self._request_create_completion(
+            prompt, max_tokens=max_tokens, temperature=temperature
+        )
+        response.raise_for_status()
+        return response.json()["choices"][0]["text"].replace("\n\n", "")

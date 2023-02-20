@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from db import DBManager, BlogSite
+from db import BlogSite, DBManager
 
 
 class TestIntegrationTests(TestCase):
@@ -30,4 +30,6 @@ class TestIntegrationTests(TestCase):
         site = self.db.get_blog_site("test")
         self.assertEqual(site.subject, "test")
         self.assertEqual(site.available_domain, "test.com")
-        self.assertEqual(site.desired_domains, {"test.com": "unverified", "test.nl": "verified"})
+        self.assertEqual(
+            site.desired_domains, {"test.com": "unverified", "test.nl": "verified"}
+        )

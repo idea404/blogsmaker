@@ -1,1 +1,1 @@
-from .generator import BlogGenerator
+from .generator import BlogGenerator, DNSManager

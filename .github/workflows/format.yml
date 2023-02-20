@@ -3,9 +3,8 @@ on:
   push:
 env:
   PYTHONPATH: src
-  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 jobs:
-  unit-tests:
+  black-formatting:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Branch
@@ -14,11 +13,11 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.11'
-    - name: Install requirements
-      run: pip install -r requirements.txt
-    - name: Run Unit Tests
-      run: python -m unittest tests.test_unit
-  db-tests:
+    - name: Install black
+      run: pip install black
+    - name: Run Formatting Check
+      run: black --check .
+  isort-formatting:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Branch
@@ -27,7 +26,7 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.11'
-    - name: Install requirements
-      run: pip install -r requirements.txt
-    - name: Run DB Tests
-      run: python -m unittest tests.test_db
+    - name: Install isort
+      run: pip install isort
+    - name: Run Formatting Check
+      run: isort --check .
