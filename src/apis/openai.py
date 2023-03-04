@@ -7,8 +7,8 @@ logger = get_logger()
 
 
 class OpenAIClient:
-    def __init__(self) -> None:
-        self.api_key = OPENAI_API_KEY
+    def __init__(self, api_key=OPENAI_API_KEY) -> None:
+        self.api_key = api_key
         assert self.api_key, "OPENAI_API_KEY is not set"
         self.engine = "text-davinci-003"
         logger.debug("OpenAI client initialized")
@@ -35,9 +35,9 @@ class OpenAIClient:
 
         return response
 
-    def create_completion(self, prompt, max_tokens=100, temperature=0.9) -> str:
+    def create_completion(self, prompt, max_tokens=2800, temperature=0.9) -> str:
         response = self._request_create_completion(
             prompt, max_tokens=max_tokens, temperature=temperature
         )
         response.raise_for_status()
-        return response.json()["choices"][0]["text"].replace("\n\n", "")
+        return response.json()["choices"][0]["text"]

@@ -10,7 +10,7 @@ logger = get_logger()
 
 
 class DBManager:
-    def __init__(self, filename="status.json") -> None:
+    def __init__(self, filename="db.json") -> None:
         self.file_path = DB_DIR / filename
 
     def _delete_db(self):
@@ -37,16 +37,16 @@ class DBManager:
         db = self._load_db()
         return db.get(subject)
 
-    def _set_site(self, subject: str, status: dict):
+    def _set_site(self, subject: str, site: dict):
         db = self._load_db()
-        db[subject] = status
+        db[subject] = site
         self._save_db(db)
 
-    def get_blog_site(self, status: str) -> BlogSite | None:
-        status_dict = self._get_site(status)
+    def get_blog_site(self, subject: str) -> BlogSite | None:
+        status_dict = self._get_site(subject)
         if status_dict is None:
             return None
         return BlogSite(**status_dict)
 
-    def save_blog_site(self, status: BlogSite):
-        self._set_site(subject=status.subject, status=status.to_dict())
+    def save_blog_site(self, site: BlogSite):
+        self._set_site(subject=site.subject, site=site.to_dict())
