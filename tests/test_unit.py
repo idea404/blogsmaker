@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from cli import CommandLineInterface
 from db import BlogSite
-from generator import DNSManager
+from manager import DNSManager
 from tests.mocks import MockCloudflareClient, MockOpenAIClient
 
 
@@ -13,8 +13,8 @@ class TestUnitTests(TestCase):
 
     def test_dns_manager(self):
         dns_manager = DNSManager(
-            openai_client=MockOpenAIClient(),
-            cloudflare_client=MockCloudflareClient(),
+            openai_client=MockOpenAIClient(), # type: ignore
+            cloudflare_client=MockCloudflareClient(), # type: ignore
         )
         self.assertTrue(dns_manager)
         sites = [
