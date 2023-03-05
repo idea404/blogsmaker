@@ -4,19 +4,6 @@ on:
 env:
   PYTHONPATH: src
 jobs:
-  black-formatting:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout Branch
-      uses: actions/checkout@v2
-    - name: Install Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.11'
-    - name: Install black
-      run: pip install black
-    - name: Run Formatting Check
-      run: black --check .
   isort-formatting:
     runs-on: ubuntu-latest
     steps:
@@ -30,3 +17,17 @@ jobs:
       run: pip install isort
     - name: Run Formatting Check
       run: isort --check .
+  black-formatting:
+    runs-on: ubuntu-latest
+    depends-on: isort-formatting
+    steps:
+    - name: Checkout Branch
+      uses: actions/checkout@v2
+    - name: Install Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.11'
+    - name: Install black
+      run: pip install black
+    - name: Run Formatting Check
+      run: black --check .
