@@ -19,7 +19,6 @@ jobs:
       run: isort --check .
   black-formatting:
     runs-on: ubuntu-latest
-    needs: isort-formatting
     steps:
     - name: Checkout Branch
       uses: actions/checkout@v2
