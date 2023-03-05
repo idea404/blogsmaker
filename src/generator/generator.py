@@ -17,17 +17,9 @@ class BlogGenerator:
 
     def generate(self, subjects: list[str]):
         logger.info(f"Generating blog sites for subjects: {subjects}")
-        sites = self._instantiate_blog_sites(subjects)
+        sites = self.db.get_or_create_blog_sites_from_subjects(subjects)
+        self.db.save_blog_sites(sites)
         sites = self.dns_manager.search_and_register(sites)
+        self.db.save_blog_sites(sites)
         sites = self.openai_manager.generate_sites_article_topics(sites)
-
-    def _instantiate_blog_sites(self, subjects: list[str]) -> list[BlogSite]:
-        logger.info(f"Instantiating blog sites for subjects: {subjects}")
-        sites = []
-        for subject in subjects:
-            site = self.db.get_blog_site(subject)
-            if not site:
-                site = BlogSite(subject)
-                self.db.save_blog_site(site)
-            sites.append(site)
-        return sites
+        self.db.save_blog_sites(sites)

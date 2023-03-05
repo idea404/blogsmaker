@@ -50,3 +50,28 @@ class DBManager:
 
     def save_blog_site(self, site: BlogSite):
         self._set_site(subject=site.subject, site=site.to_dict())
+
+    def save_blog_sites(self, sites: list[BlogSite]):
+        db = self._load_db()
+        for site in sites:
+            db[site.subject] = site.to_dict()
+        self._save_db(db)
+
+    def get_all_blog_sites(self) -> list[BlogSite]:
+        db = self._load_db()
+        return [BlogSite(**site) for site in db.values()]
+
+    def delete_blog_site(self, subject: str):
+        db = self._load_db()
+        if subject in db:
+            del db[subject]
+        self._save_db(db)
+
+    def get_or_create_blog_sites_from_subjects(
+        self, subjects: list[str]
+    ) -> list[BlogSite]:
+        db = self._load_db()
+        return [
+            BlogSite(subject) if subject not in db else BlogSite(**db[subject])
+            for subject in subjects
+        ]
