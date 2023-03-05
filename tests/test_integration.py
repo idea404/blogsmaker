@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from apis import OpenAIClient
 from db import BlogSite
-from generator import OpenAIManager
+from manager import OpenAIManager
 
 
 class TestIntegrationTests(TestCase):
