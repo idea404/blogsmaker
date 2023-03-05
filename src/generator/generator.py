@@ -5,7 +5,14 @@ from unsync import unsync
 
 from apis import CloudflareClient, OpenAIClient
 from db import BlogSite, BlogSiteArticle, DBManager
-from utils import BlogSiteGenerationPrompts
+from utils import (
+    MAX_DOMAIN_SEARCH_ATTEMPTS,
+    MAX_N_ARTICLES,
+    MAX_N_WORDS,
+    MIN_N_ARTICLES,
+    MIN_N_WORDS,
+    BlogSiteGenerationPrompts,
+)
 
 logger = get_logger()
 
@@ -53,7 +60,9 @@ class DNSManager:
         return [task.result() for task in tasks]  # type: ignore
 
     @unsync
-    def _search_subject(self, site: BlogSite, max_attempts=10) -> BlogSite:
+    def _search_subject(
+        self, site: BlogSite, max_attempts: int = MAX_DOMAIN_SEARCH_ATTEMPTS
+    ) -> BlogSite:
         logger.debug(f"Searching for domain for site: {site}")
         if site.available_domain:
             logger.debug(f"Site already has available domain: {site}")
@@ -101,16 +110,23 @@ class OpenAIManager:
         return [task.result() for task in tasks]  # type: ignore
 
     @unsync
-    def _generate_site_content(self, site: BlogSite) -> BlogSite:
+    def _generate_site_content(
+        self,
+        site: BlogSite,
+        min_n_articles: int = MIN_N_ARTICLES,
+        max_n_articles: int = MAX_N_ARTICLES,
+        min_n_words: int = MIN_N_WORDS,
+        max_n_words: int = MAX_N_WORDS,
+    ) -> BlogSite:
         logger.debug(f"Generating content for site: {site}")
         if site.articles:
             logger.debug(f"Site already has articles: {site}")
             return site
-        n_articles = random.randint(7, 13)
+        n_articles = random.randint(min_n_articles, max_n_articles)
         topics_list = self._request_article_topics(site.subject, n_articles)
         site.articles = topics_list
         for article in site.articles:
-            n_words = random.randint(700, 1900)
+            n_words = random.randint(min_n_words, max_n_words)
             article_content_text_string = self._request_article_text(
                 site.subject, article.topic, n_words
             )
