@@ -3,7 +3,7 @@ from unsync import unsync
 
 from apis import CloudflareClient, OpenAIClient
 from db import BlogSite
-from utils import MAX_DOMAIN_SEARCH_ATTEMPTS
+from utils import MAX_DOMAIN_SEARCH_ATTEMPTS, BlogSiteGenerationPrompts
 
 logger = get_logger()
 
