@@ -15,7 +15,7 @@ class BlogSiteGenerationPrompts:
     @staticmethod
     def site_article_text_prompt(subject: str, topic: str, n_words: int) -> str:
         return f"""
-          Write an article of roughly {n_words} words about {topic} within the subject of {subject}. 
+          Write an article of approximately {n_words} words about {topic} within the subject of {subject}. 
           Mark titles as, "Title: " followed by the title, and similarly for subtitles, "Subtitle: " followed by the subtitle. 
           Mark the end of the article with "End of article.".
         """
