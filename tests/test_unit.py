@@ -13,8 +13,8 @@ class TestUnitTests(TestCase):
 
     def test_dns_manager(self):
         dns_manager = DNSManager(
-            openai_client=MockOpenAIClient(), # type: ignore
-            cloudflare_client=MockCloudflareClient(), # type: ignore
+            openai_client=MockOpenAIClient(),  # type: ignore
+            cloudflare_client=MockCloudflareClient(),  # type: ignore
         )
         self.assertTrue(dns_manager)
         sites = [
