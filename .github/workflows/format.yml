@@ -16,7 +16,7 @@ jobs:
     - name: Install isort
       run: pip install isort
     - name: Run Formatting Check
-      run: isort --check .
+      run: isort --profile "black" --check .
   black-formatting:
     runs-on: ubuntu-latest
     steps:
