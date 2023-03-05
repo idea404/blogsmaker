@@ -123,8 +123,8 @@ class OpenAIManager:
             logger.debug(f"Site already has articles: {site}")
             return site
         n_articles = random.randint(min_n_articles, max_n_articles)
-        topics_list = self._request_article_topics(site.subject, n_articles)
-        site.articles = topics_list
+        site_articles = self._request_article_topics(site.subject, n_articles)
+        site.articles = site_articles
         for article in site.articles:
             n_words = random.randint(min_n_words, max_n_words)
             article_content_text_string = self._request_article_text(
