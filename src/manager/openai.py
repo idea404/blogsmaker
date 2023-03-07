@@ -74,7 +74,7 @@ class OpenAIManager:
         return article_text
 
     def _parse_topics_string(self, topics_string: str) -> list[str]:
-        logger.debug(f"Parsing topics string: {str(topics_string)}")
+        logger.debug(f"Parsing topics string of {topics_string.count(',') + 1} topics")
         split_list = topics_string.split(", ")
         topics = [topic.replace("\n", "").strip() for topic in split_list]
         return topics

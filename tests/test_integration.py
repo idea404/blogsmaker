@@ -1,4 +1,4 @@
-from unittest import TestCase
+from unittest import TestCase, skip
 
 from apis import OpenAIClient
 from db import BlogSite

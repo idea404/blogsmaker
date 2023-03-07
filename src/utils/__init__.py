@@ -1,5 +1,7 @@
 from .configuration import (
     DOMAIN_SUFFIX_WHITELIST,
+    GPT3_ENGINE,
+    GPT3_URL,
     MAX_DOMAIN_SEARCH_ATTEMPTS,
     MAX_N_ARTICLES,
     MAX_N_WORDS,
